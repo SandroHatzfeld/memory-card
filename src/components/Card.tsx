@@ -20,8 +20,8 @@ export default function Card(props: { roundEnd: () => void; increaseScore: () =>
 	
 
 	return (
-		<div onClick={handleClick}>
-			<img src={props.cardImage} alt="" />
+		<div className="card-wrapper" onClick={handleClick}>
+			<img src={`./images/${props.cardImage}.jpg`} alt="" />
 			<p>{props.cardName}</p>
 		</div>
 	)

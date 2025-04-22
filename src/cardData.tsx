@@ -1,18 +1,58 @@
 export const cardData = [
 	{
-		name: "card1",
-		image: "image"
+		name: "Angular",
+		image: "angular"
 	},
 	{
-		name: "card2",
-		image: "image"
+		name: "Bootstrap",
+		image: "bootstrap"
 	},
 	{
-		name: "card3",
-		image: "image"
+		name: "CSS",
+		image: "css"
 	},
 	{
-		name: "card4",
-		image: "image"
+		name: "GSAP",
+		image: "gsap"
+	},
+	{
+		name: "HTML",
+		image: "html"
+	},
+	{
+		name: "jQuery",
+		image: "jquery"
+	},
+	{
+		name: "Javascript",
+		image: "js"
+	},
+	{
+		name: "MySQL",
+		image: "mysql"
+	},
+	{
+		name: "Node.js",
+		image: "node"
+	},
+	{
+		name: "php",
+		image: "php"
+	},
+	{
+		name: "React",
+		image: "react"
+	},
+	{
+		name: "Sass",
+		image: "sass"
+	},
+	{
+		name: "Vite",
+		image: "vite"
+	},
+	{
+		name: "webpack",
+		image: "webpack"
 	},
 ]

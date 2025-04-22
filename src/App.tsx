@@ -8,11 +8,8 @@ export default function App() {
   const [reset, setReset] = useState(false)
 
   const increaseScore = () => {
-    setCurrentScore(currentScore + 1)
-    
-    if (currentScore === cardData.length - 1) {
-      roundWin()
-    }
+    setCurrentScore(() => currentScore + 1)
+    setReset(false)
   }
 
   const roundEnd = () => {
@@ -24,22 +21,21 @@ export default function App() {
     setReset(true)
   }
 
-  const roundWin = () => {
-    
-    
-
-    roundEnd()
-    
-  }
   return (
     <>
-      <h1>Memory Game</h1>
-      <p>{"Score: " + currentScore}</p>
-      <p>{"Best score: " + bestScore}</p>
+      <header>
+        <h1>Memory Game</h1>
+        <div>
+        <p>{"Score: " + currentScore}</p>
+        <p>{"Best score: " + bestScore}</p>
+        </div>
+      </header>
+
       <div id="memory-wrapper">
         {cardData.map((card: { name: string; image: string }) => {
           return (
             <Card
+              key={card.name}
               resetRound={reset}
               roundEnd={roundEnd}
               increaseScore={increaseScore}
@@ -49,6 +45,7 @@ export default function App() {
           )
         })}
       </div>
+
     </>
   )
 }
