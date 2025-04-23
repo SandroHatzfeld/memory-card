@@ -38,8 +38,8 @@ export default function App() {
     setCurrentScore(newScore)
     setReset(false)
 
-    // change order
-    setCardOrder(randomizeCards(cardData))
+    
+    toggleShuffle()
 
     if (newScore === cardData.length) {
       roundEnd(true)
@@ -58,6 +58,15 @@ export default function App() {
     setReset(true)
   }
 
+  const toggleShuffle = () => {
+    setShuffleCards(!shuffleCards)
+
+    // // change order
+    // setCardOrder(randomizeCards(cardData))
+
+    // setShuffleCards(!shuffleCards)
+  }
+
   return (
     <>
       <header>
@@ -68,7 +77,7 @@ export default function App() {
         </div>
       </header>
 
-      <div id="memory-wrapper">
+      <div id="memory-wrapper" onClick={toggleShuffle}>
         {cardOrder.map((card: Card, index) => {
           if (index < cardCount)
             return (
@@ -78,6 +87,7 @@ export default function App() {
                 roundEnd={roundEnd}
                 increaseScore={increaseScore}
                 shuffleCards={shuffleCards}
+                toggleShuffle={toggleShuffle}
                 cardName={card.name}
                 cardImage={card.image}
               />

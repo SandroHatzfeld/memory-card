@@ -24,10 +24,11 @@ header {
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: 2rem;
   box-sizing: border-box;
+  position: relative;
 
   .card-wrapper {
     aspect-ratio: 3 / 4;
-    width: 100%;
+    // width: 100%;
     display: grid;
     grid-template-rows: 1fr auto;
     overflow: hidden;

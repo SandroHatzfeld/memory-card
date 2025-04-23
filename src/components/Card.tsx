@@ -7,10 +7,11 @@ gsap.registerPlugin(useGSAP)
 export default function Card(props: {
   roundEnd: () => void
   increaseScore: () => void
+  toggleShuffle: () => void
   resetRound: boolean
   cardImage: string
   cardName: string
-	shuffleCards: boolean
+  shuffleCards: boolean
 }) {
   // clickstate
   const [wasClicked, setWasClicked] = useState(false)
@@ -23,6 +24,7 @@ export default function Card(props: {
 
   // handle click and update score/round
   const handleClick = () => {
+    if (props.shuffleCards) return
     if (wasClicked) {
       props.roundEnd()
     } else {
@@ -36,7 +38,6 @@ export default function Card(props: {
     if (props.resetRound) setWasClicked(false)
   }, [props.resetRound])
 
-
   // uniform gsap settings for cards
   if (card.current) {
     gsap.set(card.current, {
@@ -49,6 +50,7 @@ export default function Card(props: {
   // handle animation of card
   const handleMouseMove = contextSafe(
     (event: React.MouseEvent<HTMLDivElement>) => {
+      if (props.shuffleCards) return
       const bounds = event.currentTarget.getBoundingClientRect()
 
       const rotationAmount = 20
@@ -66,11 +68,40 @@ export default function Card(props: {
 
   // return card to original rotation after mouse left
   const handleMouseLeave = contextSafe(() => {
+    if (props.shuffleCards) return
+
     gsap.to(card.current, {
       rotationX: 0,
       rotationY: 0,
     })
   })
+
+  const tl = gsap.timeline({ paused: true })
+  tl.to(
+      card.current,
+      {
+        rotationY: 180,
+        duration: 1,
+      },
+      "cardTurning"
+    )
+    .to(
+      card.current,
+      {
+        position: "absolute",
+        xPercent: -50,
+        yPercent: -50,
+        left: window.innerWidth / 2,
+        top: window.innerHeight / 2,
+				duration:1
+      },
+      "cardMoving"
+    )
+
+  if (props.shuffleCards) {
+    tl.play()
+    // tl.pause()
+  }
 
   return (
     <div
