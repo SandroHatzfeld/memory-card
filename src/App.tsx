@@ -8,12 +8,20 @@ export default function App() {
   const [reset, setReset] = useState(false)
 
   const increaseScore = () => {
-    setCurrentScore(() => currentScore + 1)
+    const newScore = currentScore + 1
+    setCurrentScore(newScore)
     setReset(false)
+
+
+    if (newScore === cardData.length) {
+      roundEnd(true)
+    }
   }
 
-  const roundEnd = () => {
-    if (currentScore > bestScore) {
+  const roundEnd = (isWin = false) => {
+    if (isWin) {
+      setBestScore(cardData.length)
+    } else if (currentScore >= bestScore) {
       setBestScore(currentScore)
     }
 
@@ -21,15 +29,13 @@ export default function App() {
     setReset(true)
   }
 
-  
-
   return (
     <>
       <header>
         <h1>Memory Game</h1>
         <div>
-        <p>{"Score: " + currentScore}</p>
-        <p>{"Best score: " + bestScore}</p>
+          <p>{"Score: " + currentScore}</p>
+          <p>{"Best score: " + bestScore}</p>
         </div>
       </header>
 
@@ -47,7 +53,6 @@ export default function App() {
           )
         })}
       </div>
-
     </>
   )
 }
