@@ -10,6 +10,7 @@ export default function Card(props: {
   resetRound: boolean
   cardImage: string
   cardName: string
+	shuffleCards: boolean
 }) {
   // clickstate
   const [wasClicked, setWasClicked] = useState(false)
@@ -35,14 +36,15 @@ export default function Card(props: {
     if (props.resetRound) setWasClicked(false)
   }, [props.resetRound])
 
-	if(card.current) {
-		// uniform gsap settings for cards
-		gsap.set(card.current, {
-			perspective: 100,
-			ease: "Power3.easeOut",
-			duration: 0.5,
-		})
-	}
+
+  // uniform gsap settings for cards
+  if (card.current) {
+    gsap.set(card.current, {
+      perspective: 100,
+      ease: "Power3.easeOut",
+      duration: 0.5,
+    })
+  }
 
   // handle animation of card
   const handleMouseMove = contextSafe(
@@ -62,7 +64,7 @@ export default function Card(props: {
     }
   )
 
-	// return card to original rotation after mouse left
+  // return card to original rotation after mouse left
   const handleMouseLeave = contextSafe(() => {
     gsap.to(card.current, {
       rotationX: 0,

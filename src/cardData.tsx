@@ -16,58 +16,72 @@ import webpack from './images/webpack.jpg'
 export const cardData = [
 	{
 		name: "Angular",
-		image: angular
+		image: angular,
+		clicked: false,		
 	},
 	{
 		name: "Bootstrap",
-		image: bootstrap
+		image: bootstrap,
+		clicked: false,		
 	},
 	{
 		name: "CSS",
-		image: css
+		image: css,
+		clicked: false,		
 	},
 	{
 		name: "GSAP",
-		image: gsap
+		image: gsap,
+		clicked: false,		
 	},
 	{
 		name: "HTML",
-		image: html
+		image: html,
+		clicked: false,		
 	},
 	{
 		name: "jQuery",
-		image: jquery
+		image: jquery,
+		clicked: false,		
 	},
 	{
 		name: "Javascript",
-		image: js
+		image: js,
+		clicked: false,		
 	},
 	{
 		name: "MySQL",
-		image: mysql
+		image: mysql,
+		clicked: false,		
 	},
 	{
 		name: "Node.js",
-		image: node
+		image: node,
+		clicked: false,		
 	},
 	{
 		name: "php",
-		image: php
+		image: php,
+		clicked: false,		
 	},
 	{
 		name: "React",
-		image: react
+		image: react,
+		clicked: false,		
 	},
 	{
 		name: "Sass",
-		image: sass
+		image: sass,
+		clicked: false,		
 	},
 	{
 		name: "Vite",
-		image: vite
+		image: vite,
+		clicked: false,		
 	},
 	{
 		name: "webpack",
-		image: webpack
+		image: webpack,
+		clicked: false,		
 	},
 ]
