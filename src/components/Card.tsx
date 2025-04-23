@@ -78,7 +78,7 @@ export default function Card(props: {
       onMouseLeave={handleMouseLeave}
       ref={card}
     >
-      <img src={`./images/${props.cardImage}.jpg`} alt="" />
+      <img src={props.cardImage} alt="" />
       <p>{props.cardName}</p>
     </div>
   )
