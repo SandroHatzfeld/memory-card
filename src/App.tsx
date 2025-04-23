@@ -2,29 +2,36 @@ import { useState, useEffect } from "react"
 import { cardData } from "./cardData.tsx"
 import Card from "./components/Card"
 
+interface Card {
+  name: string
+  image: string
+  clicked: boolean
+}
+
 export default function App() {
   const [currentScore, setCurrentScore] = useState(0)
   const [bestScore, setBestScore] = useState(0)
   const [reset, setReset] = useState(false)
   const [shuffleCards, setShuffleCards] = useState(false)
-  const [cardOrder, setCardOrder] = useState<{ name: string; image: string; clicked: boolean }[]>([])
+  const [cardOrder, setCardOrder] = useState<Card[]>([])
+  const [cardCount, setCardCount] = useState(5)
 
-  const randomizeCards = (array: Array<object>) => {
+  const randomizeCards = (array: Array<Card>) => {
     for (let i = array.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      const temp = array[i];
-      array[i] = array[j];
-      array[j] = temp;
+      const j = Math.floor(Math.random() * (i + 1))
+      const temp = array[i]
+      array[i] = array[j]
+      array[j] = temp
     }
+
+    return array
   }
 
+  // initialize with random order
   useEffect(() => {
-    randomizeCards(cardData)
-    setCardOrder(cardData)
+    setCardOrder(randomizeCards(cardData))
   }, [])
-  
-  
-  
+
   // increase score and test if all cards are correctly clicked
   const increaseScore = () => {
     const newScore = currentScore + 1
@@ -32,8 +39,7 @@ export default function App() {
     setReset(false)
 
     // change order
-    randomizeCards(cardData)
-    setCardOrder(cardData)
+    setCardOrder(randomizeCards(cardData))
 
     if (newScore === cardData.length) {
       roundEnd(true)
@@ -63,18 +69,19 @@ export default function App() {
       </header>
 
       <div id="memory-wrapper">
-        {cardOrder.map((card: { name: string; image: string; clicked: boolean }) => {
-          return (
-            <Card
-              key={card.name}
-              resetRound={reset}
-              roundEnd={roundEnd}
-              increaseScore={increaseScore}
-              shuffleCards={shuffleCards}
-              cardName={card.name}
-              cardImage={card.image}
-            />
-          )
+        {cardOrder.map((card: Card, index) => {
+          if (index < cardCount)
+            return (
+              <Card
+                key={card.name}
+                resetRound={reset}
+                roundEnd={roundEnd}
+                increaseScore={increaseScore}
+                shuffleCards={shuffleCards}
+                cardName={card.name}
+                cardImage={card.image}
+              />
+            )
         })}
       </div>
     </>
