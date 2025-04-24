@@ -41,19 +41,22 @@ export default function App() {
     const newScore = currentScore + 1
     setCurrentScore(newScore)
     setReset(false)
+    
+    if (newScore === cardData.length) {
+      roundEnd(true)
+    }
 
     setHideCard(true)
     toggleShuffle()
 
-    if (newScore === cardData.length) {
-      roundEnd(true)
-    }
   }
 
   // end the round. boolean to reduce two functions into one
   const roundEnd = (isWin = false) => {
     if (isWin) {
       setBestScore(cardData.length)
+      setHideCard(true)
+
     } else if (currentScore >= bestScore) {
       setBestScore(currentScore)
     }
@@ -77,8 +80,10 @@ export default function App() {
   const setHideCard = (state = false) => {
     setIsHidden(state)
   }
+
+
   return (
-    <>
+    <div className="wrapper">
       <header>
         <h1>Memory Game</h1>
         <div>
@@ -106,6 +111,6 @@ export default function App() {
             )
         })}
       </div>
-    </>
+    </div>
   )
 }

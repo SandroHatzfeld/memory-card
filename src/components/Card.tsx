@@ -17,7 +17,6 @@ export default function Card(props: {
 }) {
   // clickstate
   const [wasClicked, setWasClicked] = useState(false)
-  console.log("rendered")
 
   // ref for card
   const cardWrapper = useRef(null)
@@ -29,7 +28,8 @@ export default function Card(props: {
   // handle click and update score/round
   const handleClick = (event: React.MouseEvent<HTMLDivElement>) => {
     event.preventDefault()
-    if (props.shuffleCards) return
+    if (props.shuffleCards || props.isHidden) return
+		
     if (wasClicked) {
       props.roundEnd()
     } else {
