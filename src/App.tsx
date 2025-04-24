@@ -13,6 +13,7 @@ export default function App() {
   const [bestScore, setBestScore] = useState(0)
   const [reset, setReset] = useState(false)
   const [shuffleCards, setShuffleCards] = useState(false)
+  const [isHidden, setIsHidden] = useState(true)
   const [cardOrder, setCardOrder] = useState<Card[]>([])
   const [cardCount, setCardCount] = useState(5)
 
@@ -30,6 +31,9 @@ export default function App() {
   // initialize with random order
   useEffect(() => {
     setCardOrder(randomizeCards(cardData))
+    setTimeout(() => {
+      setHideCard(false)
+    }, 500)
   }, [])
 
   // increase score and test if all cards are correctly clicked
@@ -38,7 +42,7 @@ export default function App() {
     setCurrentScore(newScore)
     setReset(false)
 
-    
+    setHideCard(true)
     toggleShuffle()
 
     if (newScore === cardData.length) {
@@ -58,15 +62,21 @@ export default function App() {
     setReset(true)
   }
 
-  const toggleShuffle = () => {
+  const toggleShuffle = (randomize = false) => {
     setShuffleCards(!shuffleCards)
 
-    // // change order
-    // setCardOrder(randomizeCards(cardData))
-
-    // setShuffleCards(!shuffleCards)
+    if (randomize) {
+      // change order
+      setCardOrder(randomizeCards(cardData))
+      setTimeout(() => {
+        setHideCard(false)
+      }, 10)
+    }
   }
 
+  const setHideCard = (state = false) => {
+    setIsHidden(state)
+  }
   return (
     <>
       <header>
@@ -77,7 +87,7 @@ export default function App() {
         </div>
       </header>
 
-      <div id="memory-wrapper" onClick={toggleShuffle}>
+      <div id="memory-wrapper" onClick={() => toggleShuffle(false)}>
         {cardOrder.map((card: Card, index) => {
           if (index < cardCount)
             return (
@@ -88,6 +98,8 @@ export default function App() {
                 increaseScore={increaseScore}
                 shuffleCards={shuffleCards}
                 toggleShuffle={toggleShuffle}
+                setHideCard={setHideCard}
+                isHidden={isHidden}
                 cardName={card.name}
                 cardImage={card.image}
               />

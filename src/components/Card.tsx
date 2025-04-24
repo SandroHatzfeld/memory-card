@@ -8,22 +8,27 @@ export default function Card(props: {
   roundEnd: () => void
   increaseScore: () => void
   toggleShuffle: () => void
+  setHideCard: () => void
   resetRound: boolean
   cardImage: string
   cardName: string
   shuffleCards: boolean
+  isHidden: boolean
 }) {
   // clickstate
   const [wasClicked, setWasClicked] = useState(false)
+  console.log("rendered")
 
   // ref for card
-  const card = useRef(null)
+  const cardWrapper = useRef(null)
+  const cardContainer = useRef(null)
 
   // context for gsap cleanup
-  const { contextSafe } = useGSAP({ scope: card })
+  const { contextSafe } = useGSAP({ scope: cardWrapper })
 
   // handle click and update score/round
-  const handleClick = () => {
+  const handleClick = (event: React.MouseEvent<HTMLDivElement>) => {
+    event.preventDefault()
     if (props.shuffleCards) return
     if (wasClicked) {
       props.roundEnd()
@@ -39,9 +44,9 @@ export default function Card(props: {
   }, [props.resetRound])
 
   // uniform gsap settings for cards
-  if (card.current) {
-    gsap.set(card.current, {
-      perspective: 100,
+  if (cardWrapper.current) {
+    gsap.set(cardWrapper.current, {
+      perspective: 1000,
       ease: "Power3.easeOut",
       duration: 0.5,
     })
@@ -59,7 +64,7 @@ export default function Card(props: {
       const xPos = (event.clientX - bounds.x) / bounds.width - 0.5
       const yPos = (event.clientY - bounds.y) / bounds.height - 0.5
 
-      gsap.to(card.current, {
+      gsap.to(cardWrapper.current, {
         rotationY: xPos * rotationAmount,
         rotationX: yPos * rotationAmount * -1,
       })
@@ -70,37 +75,41 @@ export default function Card(props: {
   const handleMouseLeave = contextSafe(() => {
     if (props.shuffleCards) return
 
-    gsap.to(card.current, {
+    gsap.to(cardWrapper.current, {
       rotationX: 0,
       rotationY: 0,
     })
   })
 
+  // timeline creating for shuffeling animation
   const tl = gsap.timeline({ paused: true })
-  tl.to(
-      card.current,
-      {
-        rotationY: 180,
-        duration: 1,
-      },
-      "cardTurning"
-    )
-    .to(
-      card.current,
-      {
-        position: "absolute",
-        xPercent: -50,
-        yPercent: -50,
-        left: window.innerWidth / 2,
-        top: window.innerHeight / 2,
-				duration:1
-      },
-      "cardMoving"
-    )
+
+  if (cardContainer.current) {
+    const pos = calculatePosition(cardContainer.current)
+
+    tl.to(
+        cardWrapper.current,
+        {
+          x: window.innerWidth / 2 - pos.left - pos.width / 2,
+          y: window.innerHeight / 2 - pos.top - pos.height / 2,
+          duration: 0.5,
+        },
+        "cardMovingCenter"
+      )
+      .to(
+        cardWrapper.current,
+        {
+          x: 0,
+          y: 0,
+          duration: 0.5,
+        },
+        "cardMovingBack"
+      )
+			.call(props.toggleShuffle, [true])
+  }
 
   if (props.shuffleCards) {
     tl.play()
-    // tl.pause()
   }
 
   return (
@@ -109,10 +118,35 @@ export default function Card(props: {
       onClick={handleClick}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
-      ref={card}
+      ref={cardWrapper}
     >
-      <img src={props.cardImage} alt="" />
-      <p>{props.cardName}</p>
+      <div
+        className={`card-container ${props.isHidden && "hidden"}`}
+        ref={cardContainer}
+      >
+        <div className="card-front">
+          <img src={props.cardImage} alt="" />
+          <p>{props.cardName}</p>
+        </div>
+        <div className="card-back"></div>
+      </div>
     </div>
   )
+}
+
+function calculatePosition(element: HTMLDivElement) {
+  const rect = element.getBoundingClientRect()
+
+  const scrollTop = window.pageYOffset || 0
+  const scrollLeft = window.pageXOffset || 0
+
+  const clientTop = 0
+  const clientLeft = 0
+
+  return {
+    top: Math.round(rect.top + scrollTop - clientTop),
+    left: Math.round(rect.left + scrollLeft - clientLeft),
+    height: rect.height,
+    width: rect.width,
+  }
 }
