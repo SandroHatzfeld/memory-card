@@ -30,9 +30,12 @@ export default function App() {
     if (isWin) {
       setBestScore(difficulty.cardCount)
 
+      // implement win screen
       setIsDifficultySet(false)
       setBestScore(0)
     } else if (currentScore > bestScore) {
+
+      // implement replay screen
       setBestScore(currentScore)
     }
 
