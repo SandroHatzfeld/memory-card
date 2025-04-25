@@ -25,16 +25,15 @@ export default function GameController(props: {
   // update clicked state and shuffle cards
   const handleScoreIncrease = () => {
     props.increaseScore()
-		startShuffleCards()
+    startShuffleCards()
   }
 
-	const startShuffleCards = () => {
-		setShuffleCards(true)
-		setTimeout(() => {
-			setSelectedCards(randomizeCards(selectedCards))
-		}, 500);
-
-	}
+  const startShuffleCards = () => {
+    setShuffleCards(true)
+    setTimeout(() => {
+      setSelectedCards(randomizeCards(selectedCards))
+    }, 500)
+  }
   const stopShuffleCards = () => {
     setShuffleCards(false)
   }
