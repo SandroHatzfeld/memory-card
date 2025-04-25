@@ -16,14 +16,17 @@ export default function Card(props: {
 }) {
   // clickstate
   const [wasClicked, setWasClicked] = useState(false)
-
+  
   // ref for card
   const cardWrapper = useRef(null)
   const cardContainer = useRef(null)
 
+  const { contextSafe } = useGSAP({ scope: cardWrapper }); 
+
   // handle click and update score/round
   const handleClick = (event: React.MouseEvent<HTMLDivElement>) => {
     event.preventDefault()
+    if(props.shuffleCards) return
 
     if (wasClicked) {
       props.roundEnd()
@@ -47,31 +50,33 @@ export default function Card(props: {
     })
   }
 
-  // // handle animation of card
-  // const handleMouseMove = contextSafe(
-  //   (event: React.MouseEvent<HTMLDivElement>) => {
-  //     const bounds = event.currentTarget.getBoundingClientRect()
-
-  //     const rotationAmount = 20
-
-  //     // calculate relative position of cursor to card
-  //     const xPos = (event.clientX - bounds.x) / bounds.width - 0.5
-  //     const yPos = (event.clientY - bounds.y) / bounds.height - 0.5
-
-  //     gsap.to(cardWrapper.current, {
-  //       rotationY: xPos * rotationAmount,
-  //       rotationX: yPos * rotationAmount * -1,
-  //     })
-  //   }
-  // )
-
-  // // return card to original rotation after mouse left
-  // const handleMouseLeave = contextSafe(() => {
-  //   gsap.to(cardWrapper.current, {
-  //     rotationX: 0,
-  //     rotationY: 0,
-  //   })
-  // })
+  // handle animation of card
+  const handleMouseMove = contextSafe(
+    (event: React.MouseEvent<HTMLDivElement>) => {
+      if(props.shuffleCards) return
+      const bounds = event.currentTarget.getBoundingClientRect()
+      
+      const rotationAmount = 20
+      
+      // calculate relative position of cursor to card
+      const xPos = (event.clientX - bounds.x) / bounds.width - 0.5
+      const yPos = (event.clientY - bounds.y) / bounds.height - 0.5
+      
+      gsap.to(cardWrapper.current, {
+        rotationY: xPos * rotationAmount,
+        rotationX: yPos * rotationAmount * -1,
+      })
+    }
+  )
+  
+  // return card to original rotation after mouse left
+  const handleMouseLeave = contextSafe(() => {
+    if(props.shuffleCards) return
+    gsap.to(cardWrapper.current, {
+      rotationX: 0,
+      rotationY: 0,
+    })
+  })
 
   // timeline creating for shuffeling animation
   const tl = gsap.timeline({ paused: true })
@@ -115,7 +120,13 @@ export default function Card(props: {
   }
 
   return (
-    <div className="card-wrapper" onClick={handleClick} ref={cardWrapper}>
+    <div
+      className="card-wrapper"
+      onClick={handleClick}
+      ref={cardWrapper}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
+    >
       <div className={`card-container`} ref={cardContainer}>
         <div className="card-front">
           <img src={props.cardImage} alt="" />
