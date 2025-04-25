@@ -23,13 +23,18 @@ export default function GameController(props: {
   }, [props.selectedDifficulty])
 
   // update clicked state and shuffle cards
-  const handleScoreIncrease = (cardIndex: number) => {
+  const handleScoreIncrease = () => {
     props.increaseScore()
-    selectedCards[cardIndex].clicked = true
-    setSelectedCards(randomizeCards(selectedCards))
-    setShuffleCards(true)
+		startShuffleCards()
   }
 
+	const startShuffleCards = () => {
+		setShuffleCards(true)
+		setTimeout(() => {
+			setSelectedCards(randomizeCards(selectedCards))
+		}, 500);
+
+	}
   const stopShuffleCards = () => {
     setShuffleCards(false)
   }

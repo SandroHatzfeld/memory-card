@@ -6,7 +6,7 @@ gsap.registerPlugin(useGSAP)
 
 export default function Card(props: {
   roundEnd: () => void
-  increaseScore: (index: number) => void
+  increaseScore: () => void
   stopShuffleCards: () => void
   resetRound: boolean
   cardImage: string
@@ -25,12 +25,11 @@ export default function Card(props: {
   const handleClick = (event: React.MouseEvent<HTMLDivElement>) => {
     event.preventDefault()
 
-    
     if (wasClicked) {
       props.roundEnd()
-    } else {      
+    } else {
       setWasClicked(true)
-      props.increaseScore(props.index)
+      props.increaseScore()
     }
   }
 
@@ -81,24 +80,33 @@ export default function Card(props: {
     if (cardContainer.current) {
       const pos = calculatePosition(cardContainer.current)
 
-      tl.to(
-        cardWrapper.current,
-        {
-          x: window.innerWidth / 2 - pos.left - pos.width / 2,
-          y: window.innerHeight / 2 - pos.top - pos.height / 2,
+      tl.to(cardContainer.current, {
+        rotationY: 180,
+        duration: 0.5,
+      })
+        .to(
+          cardWrapper.current,
+          {
+            x: window.innerWidth / 2 - pos.left - pos.width / 2,
+            y: window.innerHeight / 2 - pos.top - pos.height / 2,
+            duration: 0.5,
+          },
+          "cardMovingCenter"
+        )
+        .to(
+          cardWrapper.current,
+          {
+            x: 0,
+            y: 0,
+            duration: 0.5,
+          },
+          "cardMovingBack"
+        )
+        .call(props.stopShuffleCards)
+        .to(cardContainer.current, {
+          rotationY: 0,
           duration: 0.5,
-        },
-        "cardMovingCenter"
-      ).to(
-        cardWrapper.current,
-        {
-          x: 0,
-          y: 0,
-          duration: 0.5,
-        },
-        "cardMovingBack"
-      )
-      .call(props.stopShuffleCards)
+        })
     }
   })
 
