@@ -1,4 +1,4 @@
-import { useState, useEffect, ReactElement } from "react"
+import { useState, useEffect } from "react"
 import Card from "./Card"
 import * as types from "./types.ts"
 import { cardData } from "../data/cardData.tsx"
@@ -20,21 +20,21 @@ export default function GameController(props: {
     setSelectedCards(randomizeCards(cardData).slice(0, props.selectedDifficulty.cardCount))
   }, [props.selectedDifficulty])
 
-  const randomizeCards = (array: Array<types.Card>) => {
-    for (let i = array.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1))
-      const temp = array[i]
-      array[i] = array[j]
-      array[j] = temp
-    }
-    return array
-  }
-
-  const cardElements = selectedCards.map((card) => {
+	// update clicked state and shuffle cards
+  const handleScoreIncrease = (cardIndex: number) => {
+		props.increaseScore()
+		selectedCards[cardIndex].clicked = true
+		setSelectedCards(randomizeCards(selectedCards))
+		
+	}
+	
+	
+  const cardElements = selectedCards.map((card, index) => {
     return (
       <Card
         key={card.name}
-        increaseScore={props.increaseScore}
+				index={index}
+        increaseScore={handleScoreIncrease}
         roundEnd={props.roundEnd}
         resetRound={props.reset}
         cardName={card.name}
@@ -45,12 +45,7 @@ export default function GameController(props: {
 
   return <div id="memory-wrapper">{cardElements}</div>
 }
-// import gsap from "gsap"
-// import { useGSAP } from "@gsap/react"
-// gsap.registerPlugin(useGSAP)
 
-//   // context for gsap cleanup
-//   const { contextSafe } = useGSAP({ scope: cardWrapper })
 
 // // uniform gsap settings for cards
 // if (cardWrapper.current) {
@@ -133,4 +128,14 @@ function calculatePosition(element: HTMLDivElement) {
     height: rect.height,
     width: rect.width,
   }
+}
+
+const randomizeCards = (array: Array<types.Card>) => {
+	for (let i = array.length - 1; i > 0; i--) {
+		const j = Math.floor(Math.random() * (i + 1))
+		const temp = array[i]
+		array[i] = array[j]
+		array[j] = temp
+	}
+	return array
 }

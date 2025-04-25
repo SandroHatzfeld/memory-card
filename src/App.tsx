@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import { difficulties } from "./data/difficulties"
 import * as types from "./components/types.ts"
 

@@ -4,10 +4,11 @@ import { useEffect, useRef, useState } from "react"
 
 export default function Card(props: {
   roundEnd: () => void
-  increaseScore: () => void
+  increaseScore: (index: number) => void
   resetRound: boolean
   cardImage: string
-  cardName: string
+  cardName: string 
+  index: number
 
 }) {
   // clickstate
@@ -26,7 +27,7 @@ export default function Card(props: {
       props.roundEnd()
     } else {
       setWasClicked(true)
-      props.increaseScore()
+      props.increaseScore(props.index)
     }
   }
 
