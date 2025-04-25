@@ -4,9 +4,9 @@
 App
 - buttons to select difficulty
 - handle score and game end
+- shuffle cards and trim card array based on difficulty
 
 Game controller
-- shuffle cards and trim card array based on difficulty
 - renders cards
 - position of deck
 - selects 5 cards of the available ones
