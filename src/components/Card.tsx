@@ -7,26 +7,26 @@ gsap.registerPlugin(useGSAP)
 export default function Card(props: {
   roundEnd: () => void
   increaseScore: () => void
-  stopShuffleCards: () => void
   resetRound: boolean
   cardImage: string
   cardName: string
   index: number
   shuffleCards: boolean
+  position: { x: number; y: number }
 }) {
   // clickstate
   const [wasClicked, setWasClicked] = useState(false)
-  
+
   // ref for card
   const cardWrapper = useRef(null)
   const cardContainer = useRef(null)
 
-  const { contextSafe } = useGSAP({ scope: cardWrapper }); 
+  const { contextSafe } = useGSAP({ scope: cardWrapper });
 
   // handle click and update score/round
   const handleClick = (event: React.MouseEvent<HTMLDivElement>) => {
     event.preventDefault()
-    if(props.shuffleCards) return
+    if (props.shuffleCards) return
 
     if (wasClicked) {
       props.roundEnd()
@@ -49,26 +49,37 @@ export default function Card(props: {
       duration: 0.5,
     })
   }
+  
+
+  useGSAP(
+    () => {
+      gsap.to(cardWrapper.current, {
+        x: props.position.x,
+        y: props.position.y,
+      })      
+    },
+    { dependencies: [props.position], scope: cardWrapper }
+  )
 
   // handle animation of card
   const handleMouseMove = contextSafe(
     (event: React.MouseEvent<HTMLDivElement>) => {
       if(props.shuffleCards) return
       const bounds = event.currentTarget.getBoundingClientRect()
-      
+
       const rotationAmount = 20
-      
+
       // calculate relative position of cursor to card
       const xPos = (event.clientX - bounds.x) / bounds.width - 0.5
       const yPos = (event.clientY - bounds.y) / bounds.height - 0.5
-      
+
       gsap.to(cardWrapper.current, {
         rotationY: xPos * rotationAmount,
         rotationX: yPos * rotationAmount * -1,
       })
     }
   )
-  
+
   // return card to original rotation after mouse left
   const handleMouseLeave = contextSafe(() => {
     if(props.shuffleCards) return
@@ -78,46 +89,24 @@ export default function Card(props: {
     })
   })
 
-  // timeline creating for shuffeling animation
-  const tl = gsap.timeline({ paused: true })
-
-  useLayoutEffect(() => {
+  useEffect(() => {
     if (cardContainer.current) {
-      const pos = calculatePosition(cardContainer.current)
-
-      tl.to(cardContainer.current, {
-        rotationY: 180,
-        duration: 0.5,
-      })
-        .to(
-          cardWrapper.current,
-          {
-            x: window.innerWidth / 2 - pos.left - pos.width / 2,
-            y: window.innerHeight / 2 - pos.top - pos.height / 2,
-            duration: 0.5,
-          },
-          "cardMovingCenter"
-        )
-        .to(
-          cardWrapper.current,
-          {
-            x: 0,
-            y: 0,
-            duration: 0.5,
-          },
-          "cardMovingBack"
-        )
-        .call(props.stopShuffleCards)
-        .to(cardContainer.current, {
+      if (props.shuffleCards) {
+        gsap.to(cardContainer.current, {
+          rotationY: 180,
+          duration: 0.5,
+        })
+      } else {
+        gsap.to(cardContainer.current, {
           rotationY: 0,
           duration: 0.5,
         })
+      }
     }
-  })
-
-  if (props.shuffleCards) {
-    tl.play()
-  }
+  
+    
+  }, [props.shuffleCards])
+  
 
   return (
     <div

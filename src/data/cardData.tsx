@@ -17,71 +17,113 @@ export const cardData = [
 	{
 		name: "Angular",
 		image: angular,
-		clicked: false,		
+		position: {
+			x: 0,
+			y: 0,
+		}
 	},
 	{
 		name: "Bootstrap",
 		image: bootstrap,
-		clicked: false,		
+		position: {
+			x: 0,
+			y: 0,
+		}
 	},
 	{
 		name: "CSS",
 		image: css,
-		clicked: false,		
+		position: {
+			x: 0,
+			y: 0,
+		}
 	},
 	{
 		name: "GSAP",
 		image: gsap,
-		clicked: false,		
+		position: {
+			x: 0,
+			y: 0,
+		}
 	},
 	{
 		name: "HTML",
 		image: html,
-		clicked: false,		
+		position: {
+			x: 0,
+			y: 0,
+		}
 	},
 	{
 		name: "jQuery",
 		image: jquery,
-		clicked: false,		
+		position: {
+			x: 0,
+			y: 0,
+		}
 	},
 	{
 		name: "Javascript",
 		image: js,
-		clicked: false,		
+		position: {
+			x: 0,
+			y: 0,
+		}
 	},
 	{
 		name: "MySQL",
 		image: mysql,
-		clicked: false,		
+		position: {
+			x: 0,
+			y: 0,
+		}
 	},
 	{
 		name: "Node.js",
 		image: node,
-		clicked: false,		
+		position: {
+			x: 0,
+			y: 0,
+		}
 	},
 	{
 		name: "php",
 		image: php,
-		clicked: false,		
+		position: {
+			x: 0,
+			y: 0,
+		}
 	},
 	{
 		name: "React",
 		image: react,
-		clicked: false,		
+		position: {
+			x: 0,
+			y: 0,
+		}
 	},
 	{
 		name: "Sass",
 		image: sass,
-		clicked: false,		
+		position: {
+			x: 0,
+			y: 0,
+		}
 	},
 	{
 		name: "Vite",
 		image: vite,
-		clicked: false,		
+		position: {
+			x: 0,
+			y: 0,
+		}
 	},
 	{
 		name: "webpack",
 		image: webpack,
-		clicked: false,		
+		position: {
+			x: 0,
+			y: 0,
+		}
 	},
 ]
