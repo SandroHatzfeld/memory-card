@@ -44,7 +44,7 @@ export default function Card(props: {
   // uniform gsap settings for cards
   if (cardWrapper.current) {
     gsap.set(cardWrapper.current, {
-      perspective: 1000,
+      perspective: 600,
       ease: "Power3.easeOut",
       duration: 0.5,
     })
@@ -111,8 +111,8 @@ export default function Card(props: {
       className="card-wrapper"
       onClick={handleClick}
       ref={cardWrapper}
-      onMouseMove={handleMouseMove}
-      onMouseLeave={handleMouseLeave}
+      // onMouseMove={handleMouseMove}
+      // onMouseLeave={handleMouseLeave}
     >
       <div className={`card-container`} ref={cardContainer}>
         <div className="card-front">

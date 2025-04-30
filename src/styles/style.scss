@@ -1,6 +1,8 @@
-$primaryColor: #3b3b3b;
-$secondaryColor: #efefef;
-$accentColor: #2676f6;
+$primaryColor: #3EE6CF;
+$secondaryColor: #088280;
+$textColor: #efefef;
+$accentColor: #F0964D;
+$backgroundColor: #132032;
 
 :root {
   font-size: 20px;
@@ -8,6 +10,8 @@ $accentColor: #2676f6;
 }
 
 body {
+  background-color: $backgroundColor;
+  color: $textColor;
   min-height: 100vh;
   &,
   p {
@@ -47,7 +51,7 @@ nav {
       border: none;
       cursor: pointer;
       background-color: $primaryColor;
-      color: $secondaryColor;
+      color: $textColor;
 
       &:hover {
         background-color: $accentColor;
@@ -78,7 +82,9 @@ nav {
   
   
   .card-wrapper {
-    $borderRadius: 1em;
+    $borderRadiusOuter: 1em;
+    $borderRadiusInner: 0.7em;
+    $lineWidth: 3px;
     aspect-ratio: 3 / 4;
     cursor: pointer;
     height: 100%;
@@ -87,8 +93,8 @@ nav {
     
 
       .card-container {
-        border: 3px solid black;
-        border-radius: $borderRadius;
+        border: $lineWidth solid $primaryColor;
+        border-radius: $borderRadiusOuter;
         height: 100%;
         width: 100%;
         position: relative;
@@ -114,20 +120,28 @@ nav {
             overflow: hidden;
             width: 100%;
             height: 100%;
-            object-fit: contain;
+            object-fit: cover;
+            border-top-left-radius:$borderRadiusInner;
+            border-top-right-radius:$borderRadiusInner;
           }
 
           p {
+            grid-row: 2 / 3;
             padding: 1em;
             text-align: center;
-            border-top: 1px solid #3b3b3b;
+            border-top: $lineWidth solid $primaryColor;
+            background-color: $secondaryColor;
             font-size: 1.25em;
+            border-bottom-left-radius:$borderRadiusInner;
+            border-bottom-right-radius:$borderRadiusInner;
           }
         }
         .card-back {
           transform: rotateY(180deg);
-          background-color: lightblue;
-          border-radius: $borderRadius;
+          background-image: url("../images/cards_backside.jpg");
+          background-size: cover;
+          background-position: center center;
+          border-radius: $borderRadiusOuter;
         }
       }
     }
