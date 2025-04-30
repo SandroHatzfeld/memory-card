@@ -9,7 +9,7 @@ gsap.registerPlugin(useGSAP)
 
 const cardSize = { width: 300, height: 500 }
 const deckPosition = {
-  x: window.innerWidth / 2 -  cardSize.width / 2,
+  x: window.innerWidth / 2 - cardSize.width / 2,
   y: window.innerHeight / 2 - cardSize.height / 2,
 }
 const columns = 5
@@ -33,11 +33,26 @@ export default function GameController(props: {
   >([])
   const shuffleTimelineRef = useRef<GSAPTimeline | null>(null)
 
+  // initialize with random order
+  useEffect(() => {
+    if (!props.selectedDifficulty) return
+    // select random cards from the available data
+    const randomCards = randomizeCards(cardData).slice(
+      0,
+      props.selectedDifficulty.cardCount
+    )
+
+    setSelectedCards(randomCards)
+    setOriginalCardPositions(calculateCardPositions(randomCards))
+    setOriginalDeckPositions(randomCards.map(() => deckPosition))
+    setCurrentCardPositions(calculateCardPositions(randomCards))
+  }, [props.selectedDifficulty])
+
   // Modify the timeline useEffect
   useEffect(() => {
     const startTimeline = gsap.timeline()
     startTimeline
-      .to({}, { duration: 0.5 })
+      .to({}, { duration: 0.1 })
       .call(() => {
         setCurrentCardPositions(originalCardPositions)
       })
@@ -45,7 +60,7 @@ export default function GameController(props: {
       .call(() => setShuffleCards(false))
 
     // Store timeline in ref
-    shuffleTimelineRef.current = gsap.timeline({ 
+    shuffleTimelineRef.current = gsap.timeline({
       paused: true,
     })
 
@@ -57,7 +72,9 @@ export default function GameController(props: {
       .to({}, { duration: 0.5 })
       // Move to random positions
       .call(() => {
-        const randomPositions = randomizeCardPositions([...originalCardPositions])
+        const randomPositions = randomizeCardPositions([
+          ...originalCardPositions,
+        ])
         setCurrentCardPositions(randomPositions)
       })
       .to({}, { duration: 0.5 })
@@ -69,28 +86,11 @@ export default function GameController(props: {
     }
   }, [originalCardPositions, originalDeckPositions, selectedCards])
 
-  // initialize with random order
-  useEffect(() => {
-    if (!props.selectedDifficulty) return
-    // select random cards from the available data
-    const randomCards = randomizeCards(cardData).slice(
-      0,
-      props.selectedDifficulty.cardCount
-    )
-
-    setSelectedCards(randomCards)
-    setOriginalCardPositions(updateCardPosition(randomCards))
-    setOriginalDeckPositions(randomCards.map(() => deckPosition))
-    setCurrentCardPositions(updateCardPosition(randomCards))
-  }, [props.selectedDifficulty])
-
   // update clicked state and shuffle cards
   const handleScoreIncrease = () => {
     props.increaseScore()
     shuffleTimelineRef.current?.restart()
-    
   }
-
   return (
     <div id="memory-wrapper">
       {selectedCards.map((card, index) => {
@@ -122,7 +122,7 @@ const randomizeCards = (array: Array<types.Card>) => {
   return array
 }
 
-const updateCardPosition = (cards: Array<types.Card>) => {
+const calculateCardPositions = (cards: Array<types.Card>) => {
   let cardPositions: Array<{ x: number; y: number }> = []
 
   cards.forEach((cardData, index) => {

@@ -21,7 +21,7 @@ export default function Card(props: {
   const cardWrapper = useRef(null)
   const cardContainer = useRef(null)
 
-  const { contextSafe } = useGSAP({ scope: cardWrapper });
+  const { contextSafe } = useGSAP({ scope: cardWrapper })
 
   // handle click and update score/round
   const handleClick = (event: React.MouseEvent<HTMLDivElement>) => {
@@ -49,14 +49,15 @@ export default function Card(props: {
       duration: 0.5,
     })
   }
-  
 
   useGSAP(
     () => {
-      gsap.to(cardWrapper.current, {
-        x: props.position.x,
-        y: props.position.y,
-      })      
+      if (cardWrapper.current) {
+        gsap.to(cardWrapper.current, {
+          x: props.position.x,
+          y: props.position.y,
+        })
+      }
     },
     { dependencies: [props.position], scope: cardWrapper }
   )
@@ -64,7 +65,7 @@ export default function Card(props: {
   // handle animation of card
   const handleMouseMove = contextSafe(
     (event: React.MouseEvent<HTMLDivElement>) => {
-      if(props.shuffleCards) return
+      if (props.shuffleCards) return
       const bounds = event.currentTarget.getBoundingClientRect()
 
       const rotationAmount = 20
@@ -82,7 +83,7 @@ export default function Card(props: {
 
   // return card to original rotation after mouse left
   const handleMouseLeave = contextSafe(() => {
-    if(props.shuffleCards) return
+    if (props.shuffleCards) return
     gsap.to(cardWrapper.current, {
       rotationX: 0,
       rotationY: 0,
@@ -103,10 +104,7 @@ export default function Card(props: {
         })
       }
     }
-  
-    
   }, [props.shuffleCards])
-  
 
   return (
     <div
