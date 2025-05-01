@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useRef, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 
 import gsap from "gsap"
 import { useGSAP } from "@gsap/react"
@@ -111,8 +111,8 @@ export default function Card(props: {
       className="card-wrapper"
       onClick={handleClick}
       ref={cardWrapper}
-      // onMouseMove={handleMouseMove}
-      // onMouseLeave={handleMouseLeave}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
     >
       <div className={`card-container`} ref={cardContainer}>
         <div className="card-front">
@@ -123,21 +123,4 @@ export default function Card(props: {
       </div>
     </div>
   )
-}
-
-function calculatePosition(element: HTMLDivElement) {
-  const rect = element.getBoundingClientRect()
-
-  const scrollTop = window.pageYOffset
-  const scrollLeft = window.pageXOffset
-
-  const clientTop = 0
-  const clientLeft = 0
-
-  return {
-    top: Math.round(rect.top + scrollTop - clientTop),
-    left: Math.round(rect.left + scrollLeft - clientLeft),
-    height: rect.height,
-    width: rect.width,
-  }
 }

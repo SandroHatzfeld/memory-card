@@ -42,10 +42,22 @@ export default function GameController(props: {
       props.selectedDifficulty.cardCount
     )
 
+  // calculate the positions based on difficulty
+    const cardPositions: Array<{ x: number; y: number }> = []
+
+    for (let index = 0; index < props.selectedDifficulty.cardCount; index++) {
+      const row = Math.floor(index / columns)
+      cardPositions.push({
+        x: ((index % columns) * cardSize.width) / 2,
+        y: (row * cardSize.height) / 2,
+      })
+      
+    }
+
     setSelectedCards(randomCards)
-    setOriginalCardPositions(calculateCardPositions(randomCards))
     setOriginalDeckOrigins(randomCards.map(() => deckOrigin))
-    setCurrentCardPositions(calculateCardPositions(randomCards))
+    setOriginalCardPositions(cardPositions)
+    setCurrentCardPositions(cardPositions)
   }, [props.selectedDifficulty])
 
   // Modify the timeline useEffect
@@ -92,19 +104,6 @@ export default function GameController(props: {
     shuffleTimelineRef.current?.restart()
   }
 
-  const calculateCardPositions = (cards: Array<types.Card>) => {
-    let cardPositions: Array<{ x: number; y: number }> = []
-
-    cards.forEach((cardData, index) => {
-      const row = Math.floor(index / columns)
-      cardPositions.push({
-        x: ((index % columns) * cardSize.width) / 2,
-        y: (row * cardSize.height) / 2,
-      })
-    })
-
-    return cardPositions
-  }
 
   return (
     <div id="memory-wrapper">
