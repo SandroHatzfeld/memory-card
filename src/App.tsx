@@ -61,7 +61,7 @@ export default function App() {
   return (
     <div className="wrapper">
       <header>
-        <h1>Memory Game</h1>
+        <h1>Webdev Memory Game</h1>
         {isDifficultySet && (
           <div>
             <p>{`Score: ${currentScore} / ${difficulty.cardCount}`}</p>

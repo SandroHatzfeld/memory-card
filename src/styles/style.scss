@@ -7,6 +7,12 @@ $backgroundColor: #132032;
 :root {
   font-size: 20px;
   font-family: Roboto, Arial, Helvetica, sans-serif;
+  @media only screen and (max-width: 1200px) {
+    font-size: 18px;
+  }
+  @media only screen and (max-width: 600px) {
+    font-size: 12px;
+  }
 }
 
 body {
@@ -72,18 +78,13 @@ nav {
   box-sizing: border-box;
   position: relative;
   
-  @media only screen and (max-width: 1200px) {
-    font-size: 18px;
-  }
-  @media only screen and (max-width: 600px) {
-    font-size: 12px;
-  }
+  
   
   
   
   .card-wrapper {
     $borderRadiusOuter: 1em;
-    $borderRadiusInner: 0.7em;
+    $borderRadiusInner: 0.8em;
     $lineWidth: 3px;
     // aspect-ratio: 3 / 4;
     cursor: pointer;
@@ -127,11 +128,11 @@ nav {
 
           p {
             grid-row: 2 / 3;
-            padding: 1em;
+            padding: 1em 0;
             text-align: center;
             border-top: $lineWidth solid $primaryColor;
             background-color: $secondaryColor;
-            font-size: 1.25em;
+            font-size: 1rem;
             border-bottom-left-radius:$borderRadiusInner;
             border-bottom-right-radius:$borderRadiusInner;
           }
