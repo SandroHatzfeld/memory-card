@@ -7,12 +7,13 @@ import gsap from "gsap"
 import { useGSAP } from "@gsap/react"
 gsap.registerPlugin(useGSAP)
 
-const cardSize = { width: 500, height: 800 }
+const cardSize = { width: 250, height: 360 }
+const cardGap = 20
 const columns = 5
 const deckOrigin = {
-  // x: window.innerWidth / 2 - cardSize.width / 2,
-  // y: window.innerHeight / 2 - cardSize.height / 2,
-  x: 0, y: 0,
+  x: window.innerWidth / 2,
+  y: window.innerHeight / 2,
+  // x: 0, y: 0,
 }
 export default function GameController(props: {
   roundEnd: () => void
@@ -33,31 +34,53 @@ export default function GameController(props: {
   >([])
   const shuffleTimelineRef = useRef<GSAPTimeline | null>(null)
 
+  const calculateCardPositions = () => {
+    const positions: Array<{ x: number; y: number }> = []
+    const rows = Math.ceil(props.selectedDifficulty.cardCount / columns)
+    const gridWidth = columns * (cardSize.width + cardGap) - cardGap
+    const gridHeight = rows * (cardSize.height + cardGap) - cardGap
+    
+    const startX = window.innerWidth/2 - gridWidth/2
+    const startY = window.innerHeight/2 - gridHeight/2
+
+    for (let index = 0; index < props.selectedDifficulty.cardCount; index++) {
+      const row = Math.floor(index / columns)
+      const col = index % columns
+      
+      positions.push({
+        x: startX + col * (cardSize.width + cardGap),
+        y: startY + row * (cardSize.height + cardGap)
+      })
+    }
+    return positions
+  }
+
   // initialize with random order
   useEffect(() => {
     if (!props.selectedDifficulty) return
-    // select random cards from the available data
     const randomCards = randomizeCards(cardData).slice(
       0,
       props.selectedDifficulty.cardCount
     )
 
-  // calculate the positions based on difficulty
-    const cardPositions: Array<{ x: number; y: number }> = []
-
-    for (let index = 0; index < props.selectedDifficulty.cardCount; index++) {
-      const row = Math.floor(index / columns)
-      cardPositions.push({
-        x: ((index % columns) * cardSize.width) / 2,
-        y: (row * cardSize.height) / 2,
-      })
-      
-    }
-
+    const positions = calculateCardPositions()
+    
     setSelectedCards(randomCards)
     setOriginalDeckOrigins(randomCards.map(() => deckOrigin))
-    setOriginalCardPositions(cardPositions)
-    setCurrentCardPositions(cardPositions)
+    setOriginalCardPositions(positions)
+    setCurrentCardPositions(positions)
+  }, [props.selectedDifficulty])
+
+  useEffect(() => {
+    const handleResize = () => {
+      if (!props.selectedDifficulty) return
+      const newPositions = calculateCardPositions()
+      setOriginalCardPositions(newPositions)
+      setCurrentCardPositions(newPositions)
+    }
+
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
   }, [props.selectedDifficulty])
 
   // Modify the timeline useEffect
@@ -104,7 +127,6 @@ export default function GameController(props: {
     shuffleTimelineRef.current?.restart()
   }
 
-
   return (
     <div id="memory-wrapper">
       {selectedCards.map((card, index) => {
@@ -117,6 +139,7 @@ export default function GameController(props: {
             resetRound={props.reset}
             cardName={card.name}
             cardImage={card.image}
+            cardSize={cardSize}
             shuffleCards={shuffleCards}
             position={currentCardPositions[index]}
           />

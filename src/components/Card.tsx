@@ -10,6 +10,7 @@ export default function Card(props: {
   resetRound: boolean
   cardImage: string
   cardName: string
+  cardSize: { width: number, height: number }
   index: number
   shuffleCards: boolean
   position: { x: number; y: number }
@@ -113,6 +114,7 @@ export default function Card(props: {
       ref={cardWrapper}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
+      style={{width:props.cardSize.width, height:props.cardSize.height}}
     >
       <div className={`card-container`} ref={cardContainer}>
         <div className="card-front">
