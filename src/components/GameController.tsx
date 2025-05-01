@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react"
+import { useState, useEffect, useRef, useCallback } from "react"
 import Card from "./Card"
 import * as types from "./types.ts"
 import { cardData } from "../data/cardData.tsx"
@@ -7,14 +7,9 @@ import gsap from "gsap"
 import { useGSAP } from "@gsap/react"
 gsap.registerPlugin(useGSAP)
 
-const cardSize = { width: 250, height: 360 }
 const cardGap = 20
-const columns = 5
-const deckOrigin = {
-  x: window.innerWidth / 2,
-  y: window.innerHeight / 2,
-  // x: 0, y: 0,
-}
+const navHeight = 150
+
 export default function GameController(props: {
   roundEnd: () => void
   increaseScore: () => void
@@ -32,28 +27,56 @@ export default function GameController(props: {
   const [currentCardPositions, setCurrentCardPositions] = useState<
     { x: number; y: number }[]
   >([])
+
+  const [cardSize, setCardSize] = useState({ width: 250, height: 360 })
+  const [columns, setColumns] = useState(5)
   const shuffleTimelineRef = useRef<GSAPTimeline | null>(null)
 
-  const calculateCardPositions = () => {
+  const deckOrigin = {
+    x: window.innerWidth / 2 - cardSize.width / 2,
+    y: window.innerHeight / 2 - cardSize.height / 2 - navHeight,
+  }
+
+  const calculateCardPositions = useCallback((size: typeof cardSize, cols: number) => {
     const positions: Array<{ x: number; y: number }> = []
-    const rows = Math.ceil(props.selectedDifficulty.cardCount / columns)
-    const gridWidth = columns * (cardSize.width + cardGap) - cardGap
-    const gridHeight = rows * (cardSize.height + cardGap) - cardGap
-    
-    const startX = window.innerWidth/2 - gridWidth/2
-    const startY = window.innerHeight/2 - gridHeight/2
+    const gridWidth = cols * (size.width + cardGap) - cardGap
+
+    const startX = window.innerWidth / 2 - gridWidth / 2
+    const startY = 0
 
     for (let index = 0; index < props.selectedDifficulty.cardCount; index++) {
-      const row = Math.floor(index / columns)
-      const col = index % columns
-      
+      const row = Math.floor(index / cols)
+      const col = index % cols
+
       positions.push({
-        x: startX + col * (cardSize.width + cardGap),
-        y: startY + row * (cardSize.height + cardGap)
+        x: startX + col * (size.width + cardGap),
+        y: startY + row * (size.height + cardGap),
       })
     }
     return positions
-  }
+  }, [props.selectedDifficulty?.cardCount])
+
+  const resizeCardsAndColumns = useCallback(() => {
+    let newSize = { width: 250, height: 360 }
+    let newColumns = 5
+
+    if (window.innerWidth < 550) {
+      newSize = { width: 100, height: 144 }
+      newColumns = 3
+    } else if (window.innerWidth < 1350) {
+      newSize = { width: 150, height: 216 }
+      newColumns = window.innerWidth < 850 ? 3 : 5
+    }
+
+    setCardSize(newSize)
+    setColumns(newColumns)
+
+    return {
+      positions: calculateCardPositions(newSize, newColumns),
+      size: newSize,
+      columns: newColumns
+    }
+  }, [calculateCardPositions])
 
   // initialize with random order
   useEffect(() => {
@@ -63,25 +86,30 @@ export default function GameController(props: {
       props.selectedDifficulty.cardCount
     )
 
-    const positions = calculateCardPositions()
-    
+    const { positions, size } = resizeCardsAndColumns()
+    const newDeckOrigin = {
+      x: window.innerWidth / 2 - size.width / 2,
+      y: window.innerHeight / 2 - size.height / 2 - navHeight,
+    }
+
     setSelectedCards(randomCards)
-    setOriginalDeckOrigins(randomCards.map(() => deckOrigin))
+    setOriginalDeckOrigins(randomCards.map(() => newDeckOrigin))
     setOriginalCardPositions(positions)
     setCurrentCardPositions(positions)
-  }, [props.selectedDifficulty])
+  }, [props.selectedDifficulty, resizeCardsAndColumns])
 
   useEffect(() => {
     const handleResize = () => {
       if (!props.selectedDifficulty) return
-      const newPositions = calculateCardPositions()
-      setOriginalCardPositions(newPositions)
-      setCurrentCardPositions(newPositions)
+
+      const newPositions = resizeCardsAndColumns()
+      setOriginalCardPositions(newPositions.positions)
+      setCurrentCardPositions(newPositions.positions)
     }
 
-    window.addEventListener('resize', handleResize)
-    return () => window.removeEventListener('resize', handleResize)
-  }, [props.selectedDifficulty])
+    window.addEventListener("resize", handleResize)
+    return () => window.removeEventListener("resize", handleResize)
+  }, [props.selectedDifficulty, resizeCardsAndColumns])
 
   // Modify the timeline useEffect
   useEffect(() => {
