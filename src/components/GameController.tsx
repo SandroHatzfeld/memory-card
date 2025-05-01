@@ -29,7 +29,6 @@ export default function GameController(props: {
   >([])
 
   const [cardSize, setCardSize] = useState({ width: 250, height: 360 })
-  const [columns, setColumns] = useState(5)
   const shuffleTimelineRef = useRef<GSAPTimeline | null>(null)
 
   const deckOrigin = useRef({
@@ -72,7 +71,6 @@ export default function GameController(props: {
     }
 
     setCardSize(newSize)
-    setColumns(newColumns)
 
     return {
       positions: calculateCardPositions(newSize, newColumns),
