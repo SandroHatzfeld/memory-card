@@ -8,7 +8,7 @@ import { useGSAP } from "@gsap/react"
 gsap.registerPlugin(useGSAP)
 
 const cardGap = 20
-const navHeight = 150
+const topPadding = 0
 
 export default function GameController(props: {
   roundEnd: () => void
@@ -32,29 +32,32 @@ export default function GameController(props: {
   const [columns, setColumns] = useState(5)
   const shuffleTimelineRef = useRef<GSAPTimeline | null>(null)
 
-  const deckOrigin = {
+  const deckOrigin = useRef({
     x: window.innerWidth / 2 - cardSize.width / 2,
-    y: window.innerHeight / 2 - cardSize.height / 2 - navHeight,
-  }
+    y: topPadding,
+  })
 
-  const calculateCardPositions = useCallback((size: typeof cardSize, cols: number) => {
-    const positions: Array<{ x: number; y: number }> = []
-    const gridWidth = cols * (size.width + cardGap) - cardGap
+  const calculateCardPositions = useCallback(
+    (size: typeof cardSize, cols: number) => {
+      const positions: Array<{ x: number; y: number }> = []
+      const gridWidth = cols * (size.width + cardGap) - cardGap
 
-    const startX = window.innerWidth / 2 - gridWidth / 2
-    const startY = 0
+      const startX = window.innerWidth / 2 - gridWidth / 2
+      const startY = topPadding
 
-    for (let index = 0; index < props.selectedDifficulty.cardCount; index++) {
-      const row = Math.floor(index / cols)
-      const col = index % cols
+      for (let index = 0; index < props.selectedDifficulty.cardCount; index++) {
+        const row = Math.floor(index / cols)
+        const col = index % cols
 
-      positions.push({
-        x: startX + col * (size.width + cardGap),
-        y: startY + row * (size.height + cardGap),
-      })
-    }
-    return positions
-  }, [props.selectedDifficulty?.cardCount])
+        positions.push({
+          x: startX + col * (size.width + cardGap),
+          y: startY + row * (size.height + cardGap),
+        })
+      }
+      return positions
+    },
+    [props.selectedDifficulty?.cardCount]
+  )
 
   const resizeCardsAndColumns = useCallback(() => {
     let newSize = { width: 250, height: 360 }
@@ -74,7 +77,7 @@ export default function GameController(props: {
     return {
       positions: calculateCardPositions(newSize, newColumns),
       size: newSize,
-      columns: newColumns
+      columns: newColumns,
     }
   }, [calculateCardPositions])
 
@@ -87,13 +90,13 @@ export default function GameController(props: {
     )
 
     const { positions, size } = resizeCardsAndColumns()
-    const newDeckOrigin = {
+    deckOrigin.current = {
       x: window.innerWidth / 2 - size.width / 2,
-      y: window.innerHeight / 2 - size.height / 2 - navHeight,
+      y: topPadding,
     }
 
     setSelectedCards(randomCards)
-    setOriginalDeckOrigins(randomCards.map(() => newDeckOrigin))
+    setOriginalDeckOrigins(randomCards.map(() => deckOrigin.current))
     setOriginalCardPositions(positions)
     setCurrentCardPositions(positions)
   }, [props.selectedDifficulty, resizeCardsAndColumns])
@@ -103,13 +106,21 @@ export default function GameController(props: {
       if (!props.selectedDifficulty) return
 
       const newPositions = resizeCardsAndColumns()
+
+      deckOrigin.current = {
+        x: window.innerWidth / 2 - newPositions.size.width / 2,
+        y: topPadding,
+      }
+      
+      setOriginalDeckOrigins(selectedCards.map(() => deckOrigin.current))
+
       setOriginalCardPositions(newPositions.positions)
       setCurrentCardPositions(newPositions.positions)
     }
 
     window.addEventListener("resize", handleResize)
     return () => window.removeEventListener("resize", handleResize)
-  }, [props.selectedDifficulty, resizeCardsAndColumns])
+  }, [props.selectedDifficulty, resizeCardsAndColumns, selectedCards])
 
   // Modify the timeline useEffect
   useEffect(() => {
