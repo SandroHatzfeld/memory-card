@@ -25,16 +25,14 @@ export default function App() {
 
     if (newScore === difficulty.cardCount) {
       setIsWin(true)
-      roundEnd()
+      roundEnd(newScore)
     }
   }
 
-  // end the round. boolean to reduce two functions into one
-  const roundEnd = () => {
-    if (isWin) {
-      setBestScore(difficulty.cardCount)
-    } else if (currentScore > bestScore) {
-      setBestScore(currentScore)
+  // end the round
+  const roundEnd = (score:number) => {
+    if (score > bestScore) {
+      setBestScore(score)
     }
 
     setGameState("restart")
@@ -53,6 +51,7 @@ export default function App() {
   }
   const handleBackToMenu = () => {
     setCurrentScore(0)
+    setBestScore(0)
     setIsDifficultySet(false)
     setGameState("menu")
     setIsWin(false)
@@ -80,7 +79,7 @@ export default function App() {
       {gameState === "game" && (
         <GameController
           increaseScore={increaseScore}
-          roundEnd={roundEnd}
+          roundEnd={() => roundEnd(currentScore)}
           selectedDifficulty={difficulty}
           reset={reset}
         />
