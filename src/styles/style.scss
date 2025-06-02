@@ -47,6 +47,7 @@ nav {
   height: 100%;
   display: grid;
   place-items: center;
+  text-align: center;
   
   div {
     display: flex;
@@ -54,6 +55,7 @@ nav {
     gap: 1rem;
 
     .button-wrapper {
+      margin-top: 2rem;
       display: flex;
       align-items: center;
     }
